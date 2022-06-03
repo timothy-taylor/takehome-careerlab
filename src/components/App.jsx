@@ -27,14 +27,7 @@ export function App() {
 	}
 
 	function onSearchSubmit(query) {
-		// Search for the users's query.
-		// TODO: render the results, instead of logging them to the console.
-		// NOTE: `searchArtworks` currently returns local data, so that we
-		// don't make too many requests to the API! Once we've built out
-		// our UI, we need to make real requests!
-		// @see: ./src/uitls/api.js
 		searchArtworks(query).then((json) => {
-			console.log(json.data);
 			setResults(
 				json.data.map(({ image_id, title, artist_title }) => ({
 					image_id,
@@ -55,7 +48,7 @@ export function App() {
 						{results.map((artwork) => (
 							<li key={artwork.image_id}>
 								<button onClick={() => handleViewToggle(artwork)}>
-									{artwork.title} by {artwork.artist_title}
+									{artwork.title} by {artwork.artist_title || 'unknown'}
 								</button>
 							</li>
 						))}
