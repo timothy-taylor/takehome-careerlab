@@ -12,6 +12,7 @@ export function SearchForm({ onSearchSubmit }) {
 	function handleFormSubmit(evt) {
 		evt.preventDefault();
 		onSearchSubmit(query);
+		setQuery('');
 	}
 
 	return (
