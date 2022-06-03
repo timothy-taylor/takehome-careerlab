@@ -6,8 +6,25 @@ import { searchArtworks } from '../utils/api';
 import { SearchForm } from './SearchForm';
 import { Footer } from './Footer';
 
+const ImageDetailsPage = ({ handleViewToggle, activeResult }) => (
+	<>
+		<img
+			alt={activeResult.title}
+			src={`https://www.artic.edu/iiif/2/${activeResult.image_id}/full/843,/0/default.jpg`}
+		/>
+		<button onClick={handleViewToggle}>Back</button>
+	</>
+);
+
 export function App() {
 	const [results, setResults] = useState([]);
+	const [activeResult, setActiveResult] = useState(null);
+	const [toggle, setToggle] = useState(true);
+
+	function handleViewToggle(title) {
+		setActiveResult(title);
+		setToggle((prev) => !prev);
+	}
 
 	function onSearchSubmit(query) {
 		// Search for the users's query.
@@ -17,9 +34,10 @@ export function App() {
 		// our UI, we need to make real requests!
 		// @see: ./src/uitls/api.js
 		searchArtworks(query).then((json) => {
+			console.log(json.data);
 			setResults(
-				json.data.map(({ id, title, artist_title }) => ({
-					id,
+				json.data.map(({ image_id, title, artist_title }) => ({
+					image_id,
 					title,
 					artist_title,
 				}))
@@ -30,14 +48,22 @@ export function App() {
 	return (
 		<div className="App">
 			<h1>TCL Career Lab Art Finder</h1>
-			<SearchForm onSearchSubmit={onSearchSubmit} />
-			<ul>
-				{results.map((artwork) => (
-					<li key={artwork.id}>
-						{artwork.title} by {artwork.artist_title}
-					</li>
-				))}
-			</ul>
+			{toggle ? (
+				<>
+					<SearchForm onSearchSubmit={onSearchSubmit} />
+					<ul>
+						{results.map((artwork) => (
+							<li key={artwork.image_id}>
+								<button onClick={() => handleViewToggle(artwork)}>
+									{artwork.title} by {artwork.artist_title}
+								</button>
+							</li>
+						))}
+					</ul>
+				</>
+			) : (
+				<ImageDetailsPage {...{ handleViewToggle, activeResult }} />
+			)}
 			<Footer />
 		</div>
 	);
